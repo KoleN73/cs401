@@ -1,9 +1,3 @@
-Describe how to:
-
-Build the images from the Dockerfiles
-What commands to use to run each program without using docker compose
-You may need to look up how to reach each Dockerfile individually
-What commands to use to run each program using the docker compose command
 
 First, you need to build the images
 Using the dockerfile_writer, and dockerfile_computer files, build the images using the docker build command as seen in the following:
@@ -24,4 +18,5 @@ Then follow up with:
 docker-compose up
 This will build both images, run writer first, then run computer as it depends on writer
 
-docker-copose down will stop everything up
+docker-compose down will stop everything up
+
