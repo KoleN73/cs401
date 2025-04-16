@@ -1,0 +1,9 @@
+FROM python:3.12-slim
+RUN pip install numpy 
+COPY contact.html /code/contact.html
+COPY index.html /code/index.html
+COPY tests.html /code/tests.html
+RUN chmod +rx /code/contact.html
+RUN chmod +rx /code/index.html
+RUN chmod +rx /code/tests.html
+ENV PATH="/code:$PATH"

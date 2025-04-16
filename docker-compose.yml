@@ -1,0 +1,22 @@
+services:
+  writer:
+    build:
+      context: ./
+      dockerfile: dockerfile_writer
+    image: kole21/writer:1.0
+    volumes:
+      - ./data:/app/data
+    command: writer.py /app/data/data.txt
+    ports:
+      - "8000:8000"  # <-- This maps container:host port
+
+  computer:
+    build:
+      context: ./
+      dockerfile: dockerfile_computer
+    image: kole21/computer:1.0
+    depends_on:
+      - writer
+    volumes:
+      - ./data:/app/data
+    command: ["computer.py", "/app/data/data.txt", "/app/data/output.txt"]

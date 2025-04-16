@@ -1,0 +1,22 @@
+
+First, you need to build the images
+Using the dockerfile_writer, and dockerfile_computer files, build the images using the docker build command as seen in the following:
+docker build -t kole21/writer:1.0 -f dockerfile-writer .
+docker build -t kole21/computer:1.0 -f dockerfile-computer .
+(-t flag names the images, and -f tells Docker which Dockerfile to use)
+(Keep in mind that it is case-sensitive when using dockerfile components)
+
+Next, we can run each container separately using the following:
+docker run --rm -v ${PWD}/my-first-git-repo/homework2/ kole21/writer:1.0 writer.py /data/data.txt
+docker run --rm -v ${PWD}/my-first-git-repo/homework2/ kole21/computer:1.0 computer.py /data/data.txt /data/output.txt
+(--rm removes the container after it exits, -v mount’s the host’s data folder into the container)
+(${PWD} is used for windows machines)
+
+This next section will run both files using docker compose
+Run docker-compose build
+Then follow up with: 
+docker-compose up
+This will build both images, run writer first, then run computer as it depends on writer
+
+docker-compose down will stop everything up
+
