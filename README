@@ -1,0 +1,45 @@
+The Movie Analyzer Program
+
+First, load the venv labeled imdb with the following in the terminal-
+imdb\Scripts\activate
+
+anaylze_data.py is going to be the work horse of this program, it has the functions to execute queries tasked in the assignment.
+The following is the packages that need to be installed as the code depends on it to function
+import sys
+import json
+import logging
+from datetime import datetime                     
+from typing import List, Dict, Optional, Union   
+
+The following is configuring the log function for debugging
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(message)s')
+
+
+analyze_data.py is a python program reads a JSON file of movie data and computes the following functions:
+1. The most profitable movie of the last 5 years
+2. Average budget of recent movies
+3. Most common word in movie titles
+4. Most profitable genre (optional)
+
+data.json is required to run this program, as the program is coded to work with the JSON's formatting
+
+The following function opens and reads the data.json file, the docstring attatched to the function givs a small 
+description of the function, as well as the arguments and the returns
+
+def read_json(filepath: str) -> Optional[List[Dict]]: 
+    try:
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+            logging.debug(f"Successfully loaded {len(data)} records from {filepath}.")
+            return data
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logging.debug(f"Failed to load JSON file: {e}")
+        return None
+
+The test_analyze_data.py file runs unit tests using pytest. It is designed to run tests on the 3 functions in 
+
+
+The following commands in terminal will be used to run the files using docker commands
+docker run --rm -v ${PWD}:/app kole21/movie_analyzer to run analyzer
+docker run --rm -v ${PWD}:/app kole21/movie_analyzer pytest test_analyze_data.py to run test
+docker run --rm -v "$PWD":/app movie-analyzer pytest -s test_analyze_data.py this is optional for debug purposes
