@@ -1,0 +1,148 @@
+#app.py is a flask program that queries a json file of data of movies. This file will breakdown code in app.py, test_app.py, as well as how to run both files. 
+
+#first, the venv movies must be activated.
+#source movies/bin/activate (for mac/linux)  or (movies\Scripts\activate) for Windows
+
+#Then, the requirements text needs to be imported as well with the following:
+#pip install -r requirements.txt
+
+#Next, appy.py can be run with the following in the terminal 
+#python app.py 
+
+#app.py explanation
+
+#This part of the code is for importing packages and data for the program to parse.
+#import json
+#import logging
+#from flask import Flask, request
+
+#This chunk is for configuring the debug
+#logging.basicConfig(level=logging.DEBUG)
+#app = Flask(__name__)
+
+#The get_data function opens and reads in the json file, as well as prints the entire dataset 
+#def get_data() -> list[dict]:
+#    with open('movies.json', 'r') as file:
+#        data = json.load(file)
+#    return data
+
+#This is an API route, capable of running a set query. In this case, it is going to return the entire data set of movies. Each API has a docstring denoted by 3 pairs of double quotation marks (explains the return of the route), 1 log at the debug level, and the ability to handle an exception error, denoted with the 'except Exception as e'.
+#@app.route('/movies', methods=['GET'])
+#def get_all_movies():
+#    logging.debug("Fetching entire movie dataset")
+#    try:
+#        data = get_data()
+#        return data, 200
+#    except Exception as e:
+#        logging.error(f"Error retrieving movie data: {e}")
+#        return {"error": "Unable to fetch data"}, 500
+
+
+#This next API is just going to return movies made in between 2020 and 2022. This is done by the filered argument. In general, all the other API use the filtered argument as well to perform their own queires as well. It is important to rememmber the format of the json, as well as the specific name of variables, as they are case sensitive. 
+
+#@app.route('/movies/2020s', methods=['GET'])
+#def get_movies_from_2020_to_2022():
+#    logging.debug("Fetching movies released between 2020 and 2022")
+#    try:
+#        data = get_data()
+#        filtered = [movie for movie in data if 2020 <= movie.get("Year", 0) <= 2022]
+#        return filtered, 200
+#    except Exception as e:
+#        logging.error(f"Error fetching 2020s movies: {e}")
+#        return {"error": "Unable to retrieve 2020s movies"}, 50
+
+#This API is grabbing a single movie with the ID of 1, if not, it wall print the return of the error
+#@app.route('/movies/<int:movie_id>', methods=['GET'])
+#def get_movie_by_id(movie_id):
+#    logging.debug(f"Looking for movie with ID: {movie_id}")
+#    try:
+#        data = get_data()
+#        movie = next((m for m in data if m.get('id') == movie_id), None)
+#        if movie:
+#            return movie, 200
+#        return {"error": "Movie not found"}, 404
+#    except Exception as e:
+#        logging.error(f"Error fetching movie by ID: {e}")
+#        return {"error": "Unable to fetch movie"}, 500
+
+
+
+
+#for looking at routes (add curl before if using in terminal):
+#http://127.0.0.1:5000/movies - Grabs entire dataset
+#http://127.0.0.1:5000/movies/2020s - Grabs movies from 2020 - 2022
+#http://127.0.0.1:5000/movies/1 - Grabs the movie with the ID of '1'
+#http://127.0.0.1:5000/movies/genre/action - Grabs movies in action genre
+#http://127.0.0.1:5000/movies/prettyalright - Grabs movies with 1 oscars or more#
+
+#This controls the flask
+#if __name__ == '__main__':
+#    app.run(debug=True, host='0.0.0.0')
+
+#test.py
+#This creates a Flask test client used to send fake HTTP requests.
+#@pytest.fixture
+#def client():
+#    app.config["TESTING"] = True
+#    with app.test_client() as client:
+#        yield client
+
+#1. test_get_all_movies
+#for i, movie in enumerate(data[:5]):              Reiterated over 5 values
+#    assert "Title" in movie                       Test case 1: Movie has a Title field
+#    assert "Year" in movie                        Test case 2: Movie has a Year field
+#    assert isinstance(movie.get("Title"), str)    Test case 3: Title is a string
+#    assert isinstance(movie.get("Year"), int)     Test case 4: Year is an integer
+#    assert isinstance(movie, dict)                Test case 5: Movie is a dictionary
+
+#2. test_get_movies_2020s
+#for i, movie in enumerate(data[:5]):              Reiterated over 5 values
+#    assert 2020 <= movie.get("Year", 0) <= 2022   Test case 1: Year is within 2020–2022
+#    assert "MPA" in movie                         Test case 2: Has MPA rating field
+#    assert isinstance(movie["MPA"], str)          Test case 3: MPA is a string
+#    assert "Duration" in movie                    Test case 4: Has Duration field
+#    assert isinstance(movie["Duration"], int)     Test case 5: Duration is an integer
+
+#3. test_get_movie_by_id
+#for movie_id in [1, 2, 3, 4, 5]:
+#    if response.status_code == 200:
+#        movie = response.get_json()
+#        assert "Rating" in movie                          Test case 1: Movie has a Rating field
+#        assert isinstance(movie["Rating"], (int, float))  Test case 2: Rating is numeric
+#        assert "Title" in movie                           Test case 3: Movie has a Title field
+#        assert isinstance(movie["Title"], str)            Test case 4: Title is a string
+#        assert isinstance(movie.get("id"), int)           Test case 5: ID is an integer
+
+#4. test_get_action_movies
+#for i, movie in enumerate(data[:5]):
+#    genres = movie.get("genres", [])
+#    assert isinstance(genres, list)             Test case 1: genres field is a list
+#    assert "Action" in genres                   Test case 2: "Action" is in the genres
+#    assert "Votes" in movie                     Test case 3: Votes field exists
+#    assert isinstance(movie["Votes"], int)      Test case 4: Votes is an integer
+#    assert "Title" in movie                     Test case 5: Movie has a Title
+
+
+#5. test_get_movies_with_oscars
+#for i, movie in enumerate(data[:5]):
+#    assert movie.get("oscars", 0) >= 2          Test case 1: Has at least 2 Oscars
+#    assert "directors" in movie                 Test case 2: Has directors field
+#    assert isinstance(movie["directors"], list) Test case 3: Directors is a list
+#    assert "Title" in movie                     Test case 4: Has a Title
+#    assert isinstance(movie["Title"], str)      Test case 5: Title is a string
+
+#def test_invalid_route(client):
+#    response = client.get('/movies/notarealroute') Sends a fake request to a non-existent endpoint.
+#    assert response.status_code == 404             Asserts that the server responds with HTTP 404 Not Found, which is the expected behavior when a user tries to access an undefined route.
+
+#Run this code in the terminal to run tests in test_app.py
+#pytest test_app.py
+
+#Builds the Docker image
+#docker build -t flask-movies-app -f dockerfile-movies .
+
+#Runs the Docker container
+#docker run --rm -p 5000:5000 flask-movies-app
+
+#Use this to mount directory (optional)
+#docker run --rm -p 5000:5000 -v ${PWD}/movies.json:/app/movies.json flask-movies-app
